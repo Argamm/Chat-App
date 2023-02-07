@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/activityContainer"
     tools:context=".MainActivity">
 
 
@@ -39,14 +40,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editMessageText"
-            android:hint="Input your message"
+            android:hint="@string/input_your_message_here"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/recyclerMessageList"
+        android:id="@+id/messageRecyclerView"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,6 +55,14 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/list_item"
         tools:itemCount="21"
-    />
+        android:layout_margin="@dimen/dp_5"/>
+
+    <include
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        android:id="@+id/listItemsLayout"
+        layout="@layout/list_item"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.chatapp
 
+import java.time.LocalDateTime
 import java.util.*
+import kotlin.time.Duration.Companion.days
 
 class Message {
     var name: String = ""
