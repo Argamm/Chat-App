@@ -1,5 +1,6 @@
 package com.example.chatapp
 
+import android.os.SystemClock
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.time.Duration.Companion.days
@@ -13,7 +14,7 @@ class Message {
     constructor(name: String, textMessage: String): this() {
         this.name = name
         this.textMessage = textMessage
-        this.messageTime = Date().time
+        this.messageTime = Date().time//TODO  time for all users is not the same
     }
 
     fun getUsername() : String{
@@ -33,10 +34,10 @@ class Message {
     }
 
     fun getMessageTime() : Long{
-        return messageTime
+        return  this.messageTime
     }
 
-    fun setMessageTime(textMessage: Long) {
+    fun setMessageTime(messageTime: Long) {
         this.messageTime = messageTime
     }
 

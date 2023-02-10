@@ -7,11 +7,14 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.databinding.ActivityMainBinding
 import com.example.chatapp.databinding.ListItemBinding
 import com.firebase.ui.auth.AuthUI
@@ -84,7 +87,6 @@ class MainActivity : AppCompatActivity() {
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
-
     private fun displayAllMessages() {
         val query = FirebaseDatabase.getInstance().getReference()
         val options = FirebaseRecyclerOptions.Builder<Message>()
@@ -112,12 +114,14 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     holder.bind(model)
                 }
+
+                override fun onDataChanged() {
+                    super.onDataChanged()
+                    messageList.scrollToPosition(itemCount - 1)
+                }
             }
-
+        messageList.layoutManager = LinearLayoutManager(this)
         messageList.adapter = firebaseListAdapter
-        firebaseListAdapter.startListening()
-
-
     }
 
     override fun onStart() {
