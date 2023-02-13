@@ -74,6 +74,10 @@ dependencies {
 //    implementation 'com.firebaseui:firebase-ui-auth:6.2.1'
     implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
 
+    //for sending emoji's but not tested yet!!!
+    implementation 'androidx.emoji:emoji-bundled:1.1.0'
+    implementation 'androidx.emoji:emoji:1.1.0'
+
 
 
 }

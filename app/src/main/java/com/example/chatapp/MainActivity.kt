@@ -13,6 +13,9 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.emoji.bundled.BundledEmojiCompatConfig
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.text.MetadataRepo
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.databinding.ActivityMainBinding
@@ -38,6 +41,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //for sending emoji, but not using or tested
+        EmojiCompat.init(BundledEmojiCompatConfig(this))
+
 
         activityMainContainer = binding.activityContainer
 
@@ -112,6 +119,10 @@ class MainActivity : AppCompatActivity() {
                     position: Int,
                     model: Message
                 ) {
+                    //for sending emoji, but not using or tested
+                    holder.itemView.findViewById<TextView>(R.id.messageText).text =
+                        EmojiCompat.get().process(model.textMessage)
+
                     holder.bind(model)
                 }
 

@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:padding="@dimen/dp_5"
-    android:background="@drawable/message_item_background">
+    android:padding="@dimen/dp_5">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/messageUser"
@@ -35,12 +34,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/dp_5"
+        android:background="@drawable/message_item_background"
         android:text="Main message text"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textIsSelectable="true"
         android:textSize="18sp"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageUser" />
 
