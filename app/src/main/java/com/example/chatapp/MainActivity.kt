@@ -1,7 +1,11 @@
 package com.example.chatapp
 
+import android.Manifest.permission.*
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.LayoutInflater
@@ -11,8 +15,11 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.MetadataRepo
@@ -29,6 +36,10 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import java.net.URI
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private val signInCode: Int = 1
     private lateinit var activityMainContainer: ConstraintLayout
     private lateinit var firebaseListAdapter: FirebaseRecyclerAdapter<Message, MessageViewHolder>
+    lateinit var imageUri: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             chooseFile.setOnClickListener {
-
+                checkReadExternalStoragePermission()
             }
         }
     }
@@ -94,8 +106,43 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
+
+        if(requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
+             imageUri = data?.data!!
+
+            binding.listItemsLayout.messageImage.setImageURI(imageUri)
+
+            Toast.makeText(this, "image uri is not null", Toast.LENGTH_LONG).show()
+
+                uploadImage(imageUri)
+
+
+        }
         super.onActivityResult(requestCode, resultCode, data)
     }
+
+    private fun uploadImage(imageUri: Uri) {
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Uploading file...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+        val formater = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.getDefault())
+        val now = Date()
+        val fileName = formater.format(now)
+        val storageReference = FirebaseStorage.getInstance().getReference("images/$fileName")
+        storageReference.putFile(imageUri).addOnSuccessListener {
+            binding.listItemsLayout.messageImage.setImageURI(null)
+            Toast.makeText(this, "gooood", Toast.LENGTH_LONG).show()
+
+            if (progressDialog.isShowing) progressDialog.dismiss()
+        }.addOnFailureListener{
+            progressDialog.dismiss()
+            Toast.makeText(this, "false", Toast.LENGTH_LONG).show()
+
+        }
+    }
+
     private fun displayAllMessages() {
         val query = FirebaseDatabase.getInstance().getReference()
         val options = FirebaseRecyclerOptions.Builder<Message>()
@@ -160,5 +207,62 @@ class MainActivity : AppCompatActivity() {
 //            Snackbar.make(activityMainContainer, "You are registered", Snackbar.LENGTH_LONG).show()
 
         }
+    }
+
+    private fun checkReadExternalStoragePermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                ACCESS_MEDIA_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    ACCESS_MEDIA_LOCATION
+                )
+            ) {
+                // Show an explanation to the user why the permission is needed
+            } else {
+                // Request the permission
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        ACCESS_MEDIA_LOCATION,
+                        READ_EXTERNAL_STORAGE,
+                        WRITE_EXTERNAL_STORAGE,
+                        CAMERA,
+                        READ_MEDIA_IMAGES
+                    ),
+                    READ_EXTERNAL_STORAGE_PERMISSION_CODE
+                )
+            }
+        } else {
+            // Permission has already been granted
+            openGallery()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        if (requestCode == READ_EXTERNAL_STORAGE_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted
+                openGallery()
+            } else {
+                // Permission has been denied
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+
+        startActivityForResult(intent, REQUEST_CODE_GALLERY)
+
     }
 }
