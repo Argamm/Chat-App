@@ -48,37 +48,39 @@ class MainActivity : AppCompatActivity() {
 
         activityMainContainer = binding.activityContainer
 
-        //if user not autiroseited
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            val signInIntent = AuthUI.getInstance().createSignInIntentBuilder().build()
-            startActivityForResult(signInIntent, signInCode)
-            startActivityForResult(
-                AuthUI.getInstance().createSignInIntentBuilder().build(),
-                signInCode
-            )
-        } else {
-//            Snackbar.make(activityMainContainer, "You are registered", Snackbar.LENGTH_LONG).show()
+        checkUserAutiroseition()
 
-        }
         displayAllMessages()
-        binding.btnSend.setOnClickListener {
-            with(binding) {
-                if (editMessageText.text.toString() != "") {
-                    FirebaseDatabase.getInstance().getReference().push().setValue(
-                        Message(
-                            FirebaseAuth.getInstance().currentUser?.email ?: "",
-                            editMessageText.text.toString()
-                        )
-                    )
-//                    firebaseListAdapter.notifyDataSetChanged()
-                    editMessageText.setText("")
-                    displayAllMessages()
-                }
-            }
-            it.hideKeyboard()
-        }
+
+       onViewClick()
 
     }
+
+    private fun onViewClick() {
+        with(binding) {
+            btnSend.setOnClickListener {
+                with(binding) {
+                    if (editMessageText.text.toString() != "") {
+                        FirebaseDatabase.getInstance().getReference().push().setValue(
+                            Message(
+                                FirebaseAuth.getInstance().currentUser?.email ?: "",
+                                editMessageText.text.toString()
+                            )
+                        )
+//                    firebaseListAdapter.notifyDataSetChanged()
+                        editMessageText.setText("")
+                        displayAllMessages()
+                    }
+                }
+                it.hideKeyboard()
+            }
+
+            chooseFile.setOnClickListener {
+
+            }
+        }
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == signInCode) {
@@ -143,5 +145,20 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         firebaseListAdapter.stopListening()
+    }
+
+    private fun checkUserAutiroseition() {
+        //if user not autiroseited
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            val signInIntent = AuthUI.getInstance().createSignInIntentBuilder().build()
+            startActivityForResult(signInIntent, signInCode)
+            startActivityForResult(
+                AuthUI.getInstance().createSignInIntentBuilder().build(),
+                signInCode
+            )
+        } else {
+//            Snackbar.make(activityMainContainer, "You are registered", Snackbar.LENGTH_LONG).show()
+
+        }
     }
 }
