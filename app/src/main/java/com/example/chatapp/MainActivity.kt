@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.LayoutInflater
@@ -48,15 +49,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activityMainContainer: ConstraintLayout
     private lateinit var firebaseListAdapter: FirebaseRecyclerAdapter<Message, MessageViewHolder>
     lateinit var imageUri: Uri
+    var downloadUri: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        //for sending emoji, but not using or tested
-        EmojiCompat.init(BundledEmojiCompatConfig(this))
-
 
         activityMainContainer = binding.activityContainer
 
@@ -73,12 +71,15 @@ class MainActivity : AppCompatActivity() {
             btnSend.setOnClickListener {
                 with(binding) {
                     if (editMessageText.text.toString() != "") {
-                        FirebaseDatabase.getInstance().getReference().push().setValue(
-                            Message(
-                                FirebaseAuth.getInstance().currentUser?.email ?: "",
-                                editMessageText.text.toString()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            FirebaseDatabase.getInstance().getReference().push().setValue(
+                                Message(
+                                    FirebaseAuth.getInstance().currentUser?.email ?: "",
+                                    editMessageText.text.toString(),
+                                    downloadUri ?: ""
+                                )
                             )
-                        )
+                        }
 //                    firebaseListAdapter.notifyDataSetChanged()
                         editMessageText.setText("")
                         displayAllMessages()
@@ -92,7 +93,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == signInCode) {
@@ -108,15 +108,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         if(requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
-             imageUri = data?.data!!
-
+            imageUri = data?.data!!
             binding.listItemsLayout.messageImage.setImageURI(imageUri)
 
-            Toast.makeText(this, "image uri is not null", Toast.LENGTH_LONG).show()
-
-                uploadImage(imageUri)
-
-
+            uploadImage(imageUri)
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -131,15 +126,27 @@ class MainActivity : AppCompatActivity() {
         val now = Date()
         val fileName = formater.format(now)
         val storageReference = FirebaseStorage.getInstance().getReference("images/$fileName")
-        storageReference.putFile(imageUri).addOnSuccessListener {
+        storageReference.putFile(imageUri).addOnSuccessListener { taskSnapshot ->
             binding.listItemsLayout.messageImage.setImageURI(null)
-            Toast.makeText(this, "gooood", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Upload successful", Toast.LENGTH_LONG).show()
 
+            storageReference.downloadUrl.addOnSuccessListener { uri ->
+                val downloadUrl = uri.toString()
+                // add the message to Firebase Realtime Database with the download URL of the image
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    FirebaseDatabase.getInstance().getReference().push().setValue(
+                        Message(
+                            FirebaseAuth.getInstance().currentUser?.email ?: "",
+                            binding.editMessageText.text.toString(),
+                            downloadUrl
+                        )
+                    )
+                }
+            }
             if (progressDialog.isShowing) progressDialog.dismiss()
         }.addOnFailureListener{
             progressDialog.dismiss()
-            Toast.makeText(this, "false", Toast.LENGTH_LONG).show()
-
+            Toast.makeText(this, "Upload failed", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -168,10 +175,6 @@ class MainActivity : AppCompatActivity() {
                     position: Int,
                     model: Message
                 ) {
-                    //for sending emoji, but not using or tested
-                    holder.itemView.findViewById<TextView>(R.id.messageText).text =
-                        EmojiCompat.get().process(model.textMessage)
-
                     holder.bind(model)
                 }
 
@@ -263,6 +266,5 @@ class MainActivity : AppCompatActivity() {
         intent.type = "image/*"
 
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
-
     }
 }
