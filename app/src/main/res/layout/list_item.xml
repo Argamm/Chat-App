@@ -11,13 +11,13 @@
         android:id="@+id/messageUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="from email"
-        app:layout_goneMarginStart="@dimen/dp_5"
-        android:textColor="#8B000000"
         android:layout_marginStart="@dimen/dp_5"
-        android:textStyle="normal|bold" />
+        android:text="from email"
+        android:textColor="#8B000000"
+        android:textStyle="normal|bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginStart="@dimen/dp_5" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/messageTime"
@@ -35,27 +35,28 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/dp_5"
         android:background="@drawable/message_item_background"
+        android:padding="10dp"
         android:text="Main message text"
         android:textColor="@color/white"
-        android:textStyle="bold"
         android:textIsSelectable="true"
         android:textSize="18sp"
-        android:padding="10dp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageUser" />
 
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:background="@drawable/message_item_background"
+
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/messageImage"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/message_item_background"
         android:padding="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageUser"
-        android:visibility="gone" />
+        app:layout_constraintTop_toBottomOf="@+id/messageUser" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

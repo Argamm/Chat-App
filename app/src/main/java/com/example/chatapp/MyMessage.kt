@@ -2,13 +2,6 @@ package com.example.chatapp
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import java.io.IOException
-import java.net.DatagramPacket
-import java.net.DatagramSocket
-import java.net.InetAddress
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 private val NTP_OFFSET = 2208988800L
@@ -16,7 +9,7 @@ private val NTP_PORT = 123
 private val NTP_PACKET_SIZE = 48
 private val NTP_MODE_CLIENT = 3
 
-class Message {
+class MyMessage {
     var name: String = ""
     var textMessage: String = ""
     var imageUrl: String = "" // new property for storing the image URL
