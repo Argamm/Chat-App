@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                 val downloadUrl = uri.toString()
                 // add the message to Firebase Realtime Database with the download URL of the image
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sendNotification(PushNotification(TOPIC, NotificationData("You have new massage", "Body", "message??")))
+                    sendNotification(PushNotification(TOPIC, NotificationData("Chat App", "You have new massage", "message??")))
 
                     FirebaseDatabase.getInstance().getReference("messages").push().setValue(
                         MyMessage(

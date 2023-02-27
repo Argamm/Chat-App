@@ -31,33 +31,8 @@ const val channelName = "com.example.chatapp"
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    override fun onMessageReceived(remoteMessage: RemoteMessage) {
-//
-//        Log.d(":aaaaaaa", "this is Anii log")
-//        val title = remoteMessage.notification!!.title
-//        val text = remoteMessage.notification!!.body
-//        val CHANNEL_ID = "MESSAGE"
-//        val channel = NotificationChannel(
-//            CHANNEL_ID,
-//            "Message Notification",
-//            IMPORTANCE_HIGH
-//        )
-//        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
-//        val notification: Notification.Builder = Notification.Builder(this, CHANNEL_ID)
-//            .setContentTitle(title)
-//            .setContentText(text)
-//            .setSmallIcon(R.mipmap.sym_def_app_icon)
-//            .setAutoCancel(true)
-//        NotificationManagerCompat.from(this).notify(1, notification.build())
-//        super.onMessageReceived(remoteMessage)
-//    }
-
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-
         sendMessage(remoteMessage)
-
     }
 
     fun sendMessage(remoteMessage: RemoteMessage) {
@@ -87,9 +62,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
-
         notificationManager.notify(notificationId, notification)
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -103,5 +76,4 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         channel.enableVibration(true)
         notificationManager.createNotificationChannel(channel)
     }
-
 }

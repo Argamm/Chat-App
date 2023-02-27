@@ -1,7 +1,15 @@
 package com.example.chatapp
 
 import android.os.Build
+import android.text.format.DateFormat.getDateFormat
 import androidx.annotation.RequiresApi
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 private val NTP_OFFSET = 2208988800L
@@ -18,12 +26,13 @@ class MyMessage {
     constructor() {}
     @RequiresApi(Build.VERSION_CODES.O)
     constructor(name: String, textMessage: String, imageUrl: String): this() {
+        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        val currentTime = calendar.timeInMillis
+
         this.name = name
         this.textMessage = textMessage
         this.imageUrl = imageUrl
-        val  sss = java.sql.Timestamp(System.currentTimeMillis())// for all users is the same, tested in two devices
-        val pp = sss.time
-        this.messageTime = pp
+        this.messageTime = currentTime
     }
 
     fun getUsername() : String{

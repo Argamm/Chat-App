@@ -45,8 +45,10 @@ class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun getDateFormat(timestamp: Long) : String {
-        val date = Date(timestamp)
-        val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm")
-        return formatter.format(date)
+        val date = Calendar.getInstance().timeInMillis
+        val formatter = SimpleDateFormat.getDateTimeInstance() //or use getDateInstance()
+        val formatedDate = formatter.format(date)
+
+        return formatedDate
     }
 }
