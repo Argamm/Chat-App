@@ -1,12 +1,19 @@
 package com.example.chatapp
 
+import android.os.Build
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.github.chrisbanes.photoview.PhotoViewAttacher
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -44,7 +51,7 @@ class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    fun getDateFormat(timestamp: Long) : String {
+    fun getDateFormat(timestamp: Long): String {
         val date = Calendar.getInstance().timeInMillis
         val formatter = SimpleDateFormat.getDateTimeInstance() //or use getDateInstance()
         val formatedDate = formatter.format(date)

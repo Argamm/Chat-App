@@ -5,9 +5,7 @@ import android.text.format.DateFormat.getDateFormat
 import androidx.annotation.RequiresApi
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -24,8 +22,9 @@ class MyMessage {
     private var messageTime: Long = 0
 
     constructor() {}
+
     @RequiresApi(Build.VERSION_CODES.O)
-    constructor(name: String, textMessage: String, imageUrl: String): this() {
+    constructor(name: String, textMessage: String, imageUrl: String) : this() {
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
         val currentTime = calendar.timeInMillis
 
@@ -35,7 +34,7 @@ class MyMessage {
         this.messageTime = currentTime
     }
 
-    fun getUsername() : String{
+    fun getUsername(): String {
         return name
     }
 
@@ -43,7 +42,7 @@ class MyMessage {
         this.name = userName
     }
 
-    fun getTextsMessage() : String{
+    fun getTextsMessage(): String {
         return textMessage
     }
 
@@ -51,12 +50,11 @@ class MyMessage {
         this.textMessage = textMessage
     }
 
-    fun getMessageTime() : Long{
-        return  this.messageTime
+    fun getMessageTime(): Long {
+        return this.messageTime
     }
 
     fun setMessageTime(messageTime: Long) {
         this.messageTime = messageTime
     }
-
 }

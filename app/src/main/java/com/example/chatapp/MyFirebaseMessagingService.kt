@@ -29,7 +29,6 @@ import kotlin.random.Random
 const val CHANNEL_ID = "notification_channel"
 const val channelName = "com.example.chatapp"
 
-
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         sendMessage(remoteMessage)
@@ -41,7 +40,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             action = Intent.ACTION_MAIN
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationId = Random.nextInt()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -49,14 +49,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, 100, intent, PendingIntent.FLAG_IMMUTABLE and PendingIntent.FLAG_CANCEL_CURRENT and PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            100,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE and PendingIntent.FLAG_CANCEL_CURRENT and PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(remoteMessage.notification?.title)
             .setContentText(remoteMessage.notification?.body)
             .setSmallIcon(android.R.drawable.stat_notify_chat)
             .setAutoCancel(true)
-            .setVibrate(longArrayOf(1000,1000,1000,1000))
+            .setVibrate(longArrayOf(1000, 1000, 1000, 1000))
             .setStyle(NotificationCompat.BigTextStyle().bigText(remoteMessage.notification?.body))
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -68,7 +73,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager) {
         val channelName = "channelName"
-        val channel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            channelName,
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
             description = "My channel description"
             enableLights(true)
             lightColor = Color.GREEN

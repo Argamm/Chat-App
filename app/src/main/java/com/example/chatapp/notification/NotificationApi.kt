@@ -2,7 +2,6 @@ package com.example.chatapp.notification
 
 import com.example.chatapp.Constants.Companion.CONTENT_TYPE
 import com.example.chatapp.Constants.Companion.SERVER_KEY
-import com.example.chatapp.Constants.Companion.TOKEN
 import retrofit2.Response
 import retrofit2.http.Body
 import okhttp3.ResponseBody

@@ -16,7 +16,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chatapp.Constants.Companion.TOKEN
 import com.example.chatapp.databinding.ActivityMainBinding
 import com.example.chatapp.notification.NotificationApi
 import com.example.chatapp.notification.NotificationData
@@ -60,14 +59,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 //for knowing device token
-       /* FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            if (!it.isSuccessful) {
-                Log.e("TokenDetails", "token failed to receive${it.result}")
-            }
-            myToken = it.result
-            Log.e("TOKEN", it.result)
-        }
-        */
+        /* FirebaseMessaging.getInstance().token.addOnCompleteListener {
+             if (!it.isSuccessful) {
+                 Log.e("TokenDetails", "token failed to receive${it.result}")
+             }
+             myToken = it.result
+             Log.e("TOKEN", it.result)
+         }
+         */
 
         activityMainContainer = binding.activityContainer
 
@@ -78,21 +77,22 @@ class MainActivity : AppCompatActivity() {
         onViewClick()
     }
 
-    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
-        try {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(TOPIC)
-            val responce = RetrofitInstance.api.postNotification(notification)
+    private fun sendNotification(notification: PushNotification) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(TOPIC)
+                val responce = RetrofitInstance.api.postNotification(notification)
 
-            if (responce.isSuccessful) {
-                Log.d("MainActivity", "Response: $responce}")
-            }else{
-                Log.d("MainActivity", responce.errorBody()!!.string())
+                if (responce.isSuccessful) {
+                    Log.d("MainActivity", "Response: $responce}")
+                } else {
+                    Log.d("MainActivity", responce.errorBody()!!.string())
+                }
+                FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
+            } catch (e: Exception) {
+                Log.e("MainActivity", e.toString())
             }
-            FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
-        } catch (e: Exception) {
-            Log.e("MainActivity", e.toString())
         }
-    }
 
     private fun onViewClick() {
         with(binding) {
@@ -100,12 +100,15 @@ class MainActivity : AppCompatActivity() {
                 if (editMessageText.text.toString() != "") {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         // Add the device tokens of the intended users in the 'to' field of the payload
-                        var payload = PushNotification(TOPIC, NotificationData("Chat App", "You have new massage", "message??"))
+                        var payload = PushNotification(
+                            TOPIC,
+                            NotificationData("Chat App", "You have new massage", "message??")
+                        )
                         sendNotification(payload)
 
                         FirebaseDatabase.getInstance().getReference("messages").push().setValue(
                             MyMessage(
-                                FirebaseAuth.getInstance().currentUser?.email ?: "",
+                                FirebaseAuth.getInstance().currentUser?.displayName ?: "",
                                 editMessageText.text.toString(),
                                 downloadUri ?: ""
                             )
@@ -163,11 +166,16 @@ class MainActivity : AppCompatActivity() {
                 val downloadUrl = uri.toString()
                 // add the message to Firebase Realtime Database with the download URL of the image
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sendNotification(PushNotification(TOPIC, NotificationData("Chat App", "You have new massage", "message??")))
+                    sendNotification(
+                        PushNotification(
+                            TOPIC,
+                            NotificationData("Chat App", "You have new massage", "message??")
+                        )
+                    )
 
                     FirebaseDatabase.getInstance().getReference("messages").push().setValue(
                         MyMessage(
-                            FirebaseAuth.getInstance().currentUser?.email ?: "",
+                            FirebaseAuth.getInstance().currentUser?.displayName ?: "",
                             binding.editMessageText.text.toString(),
                             downloadUrl
                         )

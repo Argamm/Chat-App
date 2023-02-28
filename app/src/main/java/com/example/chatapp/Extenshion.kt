@@ -7,7 +7,8 @@ import android.view.inputmethod.InputMethodManager
 
 fun View.hideKeyboardOnClick(activity: Activity) {
     setOnClickListener {
-        val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(activity.currentFocus?.windowToken, 0)
     }
 }
