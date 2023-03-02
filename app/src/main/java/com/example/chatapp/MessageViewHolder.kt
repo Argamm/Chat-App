@@ -39,6 +39,7 @@ class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         if (message.imageUrl.isNotEmpty()) { // If imageUrl is not empty
             messageImage.visibility = View.VISIBLE
+            messageText.visibility = View.GONE
             messageImage.load(message.imageUrl) {
                 crossfade(false)
                 crossfade(500)
@@ -47,14 +48,14 @@ class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
             messageImage.visibility = View.VISIBLE // Show the ImageView
         } else {
+            messageText.visibility = View.VISIBLE
             messageImage.visibility = View.GONE // Hide the ImageView
         }
     }
 
     fun getDateFormat(timestamp: Long): String {
-        val date = Calendar.getInstance().timeInMillis
         val formatter = SimpleDateFormat.getDateTimeInstance() //or use getDateInstance()
-        val formatedDate = formatter.format(date)
+        val formatedDate = formatter.format(timestamp)
 
         return formatedDate
     }

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
+    android:id="@+id/itemContainer"
     android:padding="@dimen/dp_5">
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -40,6 +41,7 @@
         android:textColor="@color/white"
         android:textIsSelectable="true"
         android:textSize="18sp"
+        android:selectAllOnFocus="false"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +53,6 @@
         android:id="@+id/messageImage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/message_item_background"
         android:padding="10dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

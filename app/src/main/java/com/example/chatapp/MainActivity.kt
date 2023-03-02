@@ -8,36 +8,29 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.databinding.ActivityMainBinding
-import com.example.chatapp.notification.NotificationApi
 import com.example.chatapp.notification.NotificationData
 import com.example.chatapp.notification.PushNotification
 import com.example.chatapp.notification.RetrofitInstance
-import com.example.chatapp.notification.RetrofitInstance.Companion.retrofit
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.internal.notify
-import okhttp3.internal.notifyAll
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var firebaseListAdapter: FirebaseRecyclerAdapter<MyMessage, MessageViewHolder>
     lateinit var imageUri: Uri
     var downloadUri: String? = null
+    var id = Random().nextInt()
 //    var myToken = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,6 +102,7 @@ class MainActivity : AppCompatActivity() {
 
                         FirebaseDatabase.getInstance().getReference("messages").push().setValue(
                             MyMessage(
+                                id++,
                                 FirebaseAuth.getInstance().currentUser?.displayName ?: "",
                                 editMessageText.text.toString(),
                                 downloadUri ?: ""
@@ -175,6 +170,7 @@ class MainActivity : AppCompatActivity() {
 
                     FirebaseDatabase.getInstance().getReference("messages").push().setValue(
                         MyMessage(
+                            id++,
                             FirebaseAuth.getInstance().currentUser?.displayName ?: "",
                             binding.editMessageText.text.toString(),
                             downloadUrl
@@ -197,33 +193,31 @@ class MainActivity : AppCompatActivity() {
 
         val messageList = binding.messageRecyclerView
 
-        firebaseListAdapter =
-            object : FirebaseRecyclerAdapter<MyMessage, MessageViewHolder>(options) {
+        firebaseListAdapter = MessageAdapter(messageList, options)
 
-                override fun onCreateViewHolder(
-                    parent: ViewGroup,
-                    viewType: Int
-                ): MessageViewHolder {
-                    val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.list_item, parent, false)
-                    return MessageViewHolder(view)
-                }
-
-                override fun onBindViewHolder(
-                    holder: MessageViewHolder,
-                    position: Int,
-                    model: MyMessage
-                ) {
-                    holder.bind(model)
-                }
-
-                override fun onDataChanged() {
-                    super.onDataChanged()
-                    messageList.scrollToPosition(itemCount - 1)
-                }
-            }
         messageList.layoutManager = LinearLayoutManager(this)
         messageList.adapter = firebaseListAdapter
+
+       getSwipeToDelete()
+    }
+
+    private fun getSwipeToDelete() {
+        val swipeHandler = object : SwipeToDeleteCallback(firebaseListAdapter as MessageAdapter, binding.messageRecyclerView) {
+            override fun getSwipeDirs(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                val position = viewHolder.adapterPosition
+                val item = adapter.getItem(position)
+                if (item != null) {
+                    return super.getSwipeDirs(recyclerView, viewHolder)
+                }
+                return 0
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.messageRecyclerView)
     }
 
     override fun onStart() {
