@@ -8,10 +8,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.lang.Math.abs
 
@@ -86,6 +88,7 @@ open class SwipeToDeleteCallback(
             // Notify the adapter to update the view
             adapter.notifyItemChanged(viewHolder.adapterPosition)
             animator.setListener(null)
+            colorAnimation.end()
 
             dialog.dismiss()
         }
