@@ -9,7 +9,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 
-
 class NotificationReceiver: BroadcastReceiver() {
     var notificationManager: NotificationManager? = null
     override fun onReceive(context: Context, intent: Intent) {

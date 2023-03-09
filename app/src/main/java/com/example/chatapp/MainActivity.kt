@@ -41,11 +41,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val signInCode: Int = 1
     private lateinit var activityMainContainer: ConstraintLayout
-    private lateinit var firebaseListAdapter: FirebaseRecyclerAdapter<MyMessage, MessageViewHolder>
+    private lateinit var firebaseListAdapter: MessageAdapter
     lateinit var imageUri: Uri
     var downloadUri: String? = null
     var id = Random().nextInt()
-//    var myToken = ""
+    val senderId = FirebaseAuth.getInstance().currentUser?.uid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,15 +101,18 @@ class MainActivity : AppCompatActivity() {
                         sendNotification(payload)
 
                         FirebaseDatabase.getInstance().getReference("messages").push().setValue(
-                            MyMessage(
-                                id++,
-                                FirebaseAuth.getInstance().currentUser?.displayName ?: "",
-                                editMessageText.text.toString(),
-                                downloadUri ?: ""
-                            )
+                            senderId?.let { senderId ->
+                                MyMessage(
+                                    id++,
+                                    senderId,
+                                    FirebaseAuth.getInstance().currentUser?.displayName ?: "",
+                                    editMessageText.text.toString(),
+                                    downloadUri ?: ""
+                                )
+                            }
                         )
                     }
-//                  firebaseListAdapter.notifyDataSetChanged()
+
                     editMessageText.setText("")
                     displayAllMessages()
                 }
@@ -169,12 +172,15 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     FirebaseDatabase.getInstance().getReference("messages").push().setValue(
-                        MyMessage(
-                            id++,
-                            FirebaseAuth.getInstance().currentUser?.displayName ?: "",
-                            binding.editMessageText.text.toString(),
-                            downloadUrl
-                        )
+                        senderId?.let { senderId ->
+                            MyMessage(
+                                id++,
+                                senderId,
+                                FirebaseAuth.getInstance().currentUser?.displayName ?: "",
+                                binding.editMessageText.text.toString(),
+                                downloadUrl
+                            )
+                        }
                     )
                 }
             }
@@ -198,23 +204,25 @@ class MainActivity : AppCompatActivity() {
         messageList.layoutManager = LinearLayoutManager(this)
         messageList.adapter = firebaseListAdapter
 
-       getSwipeToDelete()
+        getSwipeToDelete()
     }
 
     private fun getSwipeToDelete() {
-        val swipeHandler = object : SwipeToDeleteCallback(firebaseListAdapter as MessageAdapter, binding.messageRecyclerView) {
-            override fun getSwipeDirs(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
-            ): Int {
-                val position = viewHolder.adapterPosition
-                val item = adapter.getItem(position)
-                if (item != null) {
-                    return super.getSwipeDirs(recyclerView, viewHolder)
+        val swipeHandler =
+            object : SwipeToDeleteCallback(firebaseListAdapter, binding.messageRecyclerView) {
+                override fun getSwipeDirs(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder
+                ): Int {
+                    val position = viewHolder.adapterPosition
+                    val adapter = recyclerView.adapter as FirebaseRecyclerAdapter<*, *>
+                    val item = adapter.getItem(position)
+                    if (item != null) {
+                        return super.getSwipeDirs(recyclerView, viewHolder)
+                    }
+                    return 0
                 }
-                return 0
             }
-        }
 
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.messageRecyclerView)
@@ -227,7 +235,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-//        firebaseListAdapter.stopListening()
+        firebaseListAdapter.stopListening()
     }
 
     private fun checkUserAutiroseition() {

@@ -12,6 +12,7 @@ private val NTP_MODE_CLIENT = 3
 
 class MyMessage {
     var id: Int = 0
+    var senderId: String = "" // new property for storing senderId
     var name: String = ""
     var textMessage: String = ""
     var imageUrl: String = "" // new property for storing the image URL
@@ -20,10 +21,11 @@ class MyMessage {
     constructor() {}
 
     @RequiresApi(Build.VERSION_CODES.O)
-    constructor(id: Int, name: String, textMessage: String, imageUrl: String) : this() {
+    constructor(id: Int, senderId: String, name: String, textMessage: String, imageUrl: String) : this() {
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
         val currentTime = calendar.timeInMillis
 
+        this.senderId = senderId
         this.name = name
         this.textMessage = textMessage
         this.imageUrl = imageUrl

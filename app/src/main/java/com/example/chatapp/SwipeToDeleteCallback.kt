@@ -40,9 +40,25 @@ open class SwipeToDeleteCallback(
         val ref = FirebaseDatabase.getInstance().getReference("messages")
         val query: Query = ref.orderByChild("id").equalTo(item.id.toDouble())
 
+        // Remove the red color from the item view
+        viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(viewHolder.itemView.context, android.R.color.transparent))
+//        viewHolder.itemView.alpha = 1f
+
+        // Check if the message was sent by the current user
+        if (item.senderId != FirebaseAuth.getInstance().currentUser?.uid) {
+            // If not, don't allow it to be deleted
+            // adapter.notifyItemChanged(position, null)
+            val adapter = recyclerView.adapter
+            adapter?.notifyItemChanged(viewHolder.adapterPosition)
+            viewHolder.itemView.setBackgroundColor(0) // Reset the background color
+            return
+        }
+
+        // Show the delete confirmation dialog
         val builder = AlertDialog.Builder(viewHolder.itemView.context)
         builder.setMessage("Are you sure you want to delete this message?")
         builder.setPositiveButton("Delete") { dialog, _ ->
+            // Delete the message from the database
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (snapshot in dataSnapshot.children) {
@@ -56,9 +72,13 @@ open class SwipeToDeleteCallback(
                 }
             })
             dialog.dismiss()
+
+            // Reset the background color after the dialog is dismissed
+            viewHolder.itemView.setBackgroundColor(0)
         }
 
         builder.setNegativeButton("Cancel") { dialog, _ ->
+            // Reset the item view's position and alpha
             val itemView = viewHolder.itemView
             val animator = itemView.animate()
                 .translationX(0f)
@@ -66,7 +86,6 @@ open class SwipeToDeleteCallback(
                 .setDuration(500)
                 .setInterpolator(AccelerateInterpolator())
 
-            itemView.setBackgroundColor(0)
             // Change the background color gradually to the original color
             val originalColor = itemView.resources.getColor(R.color.white)
             val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), Color.TRANSPARENT, originalColor)
@@ -82,17 +101,18 @@ open class SwipeToDeleteCallback(
                     itemView.setBackgroundColor(originalColor) // Set the background color to the original color
                 }
             })
-
+            // Notify the adapter to update the view
+//            adapter.notifyItemChanged(viewHolder.adapterPosition)
+            // Start the animations
             animator.start()
             colorAnimation.start()
-            // Notify the adapter to update the view
-            adapter.notifyItemChanged(viewHolder.adapterPosition)
-            animator.setListener(null)
-            colorAnimation.end()
 
             dialog.dismiss()
         }
         builder.show()
+
+        val adapter = recyclerView.adapter
+        adapter?.notifyItemChanged(viewHolder.adapterPosition)
     }
 
     override fun isItemViewSwipeEnabled(): Boolean {
@@ -128,6 +148,10 @@ open class SwipeToDeleteCallback(
         val iconMargin = (itemHeight - intrinsicHeight) / 2
         val iconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
         val iconBottom = iconTop + intrinsicHeight
+
+        // Reset the translationX and alpha properties
+        itemView.translationX = 0f
+        itemView.alpha = 1f
 
         if (!viewHolder.itemView.isPressed) {
             // Draw the swipe action background
