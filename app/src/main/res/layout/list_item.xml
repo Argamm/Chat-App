@@ -9,44 +9,77 @@
     android:padding="@dimen/dp_5">
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/messageTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="March 8"
+        android:textStyle="italic|bold|normal"
+        android:textColor="#8B000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/messageUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_5"
-        android:text="from email"
+        android:text="James Blunt"
         android:textColor="#8B000000"
         android:textStyle="normal|bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageTime"
         app:layout_goneMarginStart="@dimen/dp_5" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/messageTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/dp_5"
-        android:text="10.02.2055"
-        android:textColor="#8B000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/messageText"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/messageContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/dp_5"
         android:background="@drawable/message_item_background"
-        android:padding="10dp"
-        android:text="Main message text"
-        android:textColor="@color/white"
-        android:textIsSelectable="true"
-        android:textSize="18sp"
-        android:selectAllOnFocus="false"
-        android:textStyle="bold"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageUser" />
+        app:layout_constraintTop_toBottomOf="@+id/messageUser">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/messageText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginVertical="@dimen/dp_5"
+            android:padding="10dp"
+            android:selectAllOnFocus="false"
+            android:text="Main message text Main message text Main message text Main message text Main message text Main message text Main message text Main message text"
+            android:textColor="@color/white"
+            android:textIsSelectable="true"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/insideMessageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="end"
+            android:text="10,25,55"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
+            app:layout_constraintEnd_toEndOf="@+id/messageContainer"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/messageText"
+            app:layout_constraintTop_toBottomOf="@+id/messageText"
+            app:layout_constraintVertical_bias="0.884" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <com.github.chrisbanes.photoview.PhotoView

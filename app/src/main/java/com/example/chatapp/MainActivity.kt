@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 const val TOPIC = "/topics/my_topic"
 
 class MainActivity : AppCompatActivity() {
@@ -101,15 +100,13 @@ class MainActivity : AppCompatActivity() {
                         sendNotification(payload)
 
                         FirebaseDatabase.getInstance().getReference("messages").push().setValue(
-                            senderId?.let { senderId ->
-                                MyMessage(
-                                    id++,
-                                    senderId,
-                                    FirebaseAuth.getInstance().currentUser?.displayName ?: "",
-                                    editMessageText.text.toString(),
-                                    downloadUri ?: ""
-                                )
-                            }
+                            MyMessage(
+                                id++,
+                                senderId ?: "",
+                                FirebaseAuth.getInstance().currentUser?.displayName ?: "",
+                                editMessageText.text.toString(),
+                                downloadUri ?: ""
+                            )
                         )
                     }
 
@@ -172,15 +169,13 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     FirebaseDatabase.getInstance().getReference("messages").push().setValue(
-                        senderId?.let { senderId ->
-                            MyMessage(
-                                id++,
-                                senderId,
-                                FirebaseAuth.getInstance().currentUser?.displayName ?: "",
-                                binding.editMessageText.text.toString(),
-                                downloadUrl
-                            )
-                        }
+                        MyMessage(
+                            id++,
+                            senderId ?: "",
+                            FirebaseAuth.getInstance().currentUser?.displayName ?: "",
+                            binding.editMessageText.text.toString(),
+                            downloadUrl
+                        )
                     )
                 }
             }
@@ -208,21 +203,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getSwipeToDelete() {
-        val swipeHandler =
-            object : SwipeToDeleteCallback(firebaseListAdapter, binding.messageRecyclerView) {
-                override fun getSwipeDirs(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder
-                ): Int {
-                    val position = viewHolder.adapterPosition
-                    val adapter = recyclerView.adapter as FirebaseRecyclerAdapter<*, *>
-                    val item = adapter.getItem(position)
-                    if (item != null) {
-                        return super.getSwipeDirs(recyclerView, viewHolder)
-                    }
-                    return 0
+        val swipeHandler = object : SwipeToDeleteCallback(firebaseListAdapter, binding.messageRecyclerView) {
+            override fun getSwipeDirs(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                val position = viewHolder.adapterPosition
+                val item = adapter.getItem(position)
+                if (item != null) {
+                    return super.getSwipeDirs(recyclerView, viewHolder)
                 }
+                return 0
             }
+        }
 
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.messageRecyclerView)

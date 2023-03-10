@@ -37,8 +37,8 @@ class MyMessage {
         return name
     }
 
-    fun setUsername(userName: String) {
-        this.name = userName
+    fun setUsername(name: String) {
+        this.name = name
     }
 
     fun getTextsMessage(): String {
