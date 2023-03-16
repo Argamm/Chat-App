@@ -10,13 +10,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.example.chatapp.databinding.ListItemBinding
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.github.chrisbanes.photoview.PhotoViewAttacher
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,6 +29,10 @@ class MessageAdapter(
     options: FirebaseRecyclerOptions<MyMessage>
 ) : FirebaseRecyclerAdapter<MyMessage, MessageAdapter.MessageViewHolder>(options) {
     val messageList = messageList
+    private lateinit var binding: ListItemBinding
+
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val currentUserId = currentUser?.uid
 
     // Keep track of the previous month and day
     private var prevMonthAndDay: String? = null
@@ -36,33 +43,49 @@ class MessageAdapter(
         var messageTime = itemView.findViewById<TextView>(R.id.messageTime)
         private var insideMessageTime = itemView.findViewById<TextView>(R.id.insideMessageTime)
         private var messageImage = itemView.findViewById<AppCompatImageView>(R.id.messageImage)
+        var messageContainer = itemView.findViewById<ConstraintLayout>(R.id.messageContainer)
+
 
         fun bind(message: MyMessage?) {
             message?.let {
                 messageUser.text = message.getUsername()
                 messageText.text = it.getTextsMessage()
-                insideMessageTime.text = getTime(it.getMessageTime())
+                insideMessageTime.text = it.getMessageTime().toFormattedTime()
 
                 val attacher = PhotoViewAttacher(messageImage)
                 attacher.isZoomable = true
                 attacher.maximumScale = 10f
 
-                if (it.imageUrl.isNotEmpty()) { // If imageUrl is not empty
-                    messageImage.visibility = View.VISIBLE
-                    messageText.visibility = View.GONE
-                    messageImage.load(it.imageUrl) {
-                        crossfade(false)
-                        crossfade(500)
-                        placeholder(R.drawable.img)
-                        //transformations(CircleCropTransformation())
+                when {
+                    it.imageUrl.isNotEmpty() -> {
+                        messageImage.visibility = View.VISIBLE
+                        messageText.visibility = View.GONE
+                        messageImage.load(it.imageUrl) {
+                            crossfade(false)
+                            crossfade(500)
+                            placeholder(R.drawable.img)
+                        }
                     }
-                    messageImage.visibility = View.VISIBLE // Show the ImageView
+                    else -> {
+                        messageText.visibility = View.VISIBLE
+                        messageImage.visibility = View.GONE
+                    }
+                }
+                val params = messageContainer.layoutParams as ConstraintLayout.LayoutParams
+
+                if (it.senderId == currentUserId) {
+                    messageContainer.setBackgroundResource(R.drawable.message_item_background_current_user)
+                    params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                    params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
                 } else {
-                    messageText.visibility = View.VISIBLE
-                    messageImage.visibility = View.GONE // Hide the ImageView
+                    messageContainer.setBackgroundResource(R.drawable.message_item_background)
+                    params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                    params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
                 }
 
-                val monthAndDay = getMonthAndDay(it.getMessageTime())
+                messageContainer.layoutParams = params
+
+                val monthAndDay = it.getMessageTime().toFormattedDate()
                 if (monthAndDay != prevMonthAndDay) {
                     prevMonthAndDay = monthAndDay
 
@@ -72,6 +95,17 @@ class MessageAdapter(
                     messageTime.visibility = View.GONE
                 }
             }
+        }
+    }
+
+    override fun onViewRecycled(holder: MessageViewHolder) {
+        super.onViewRecycled(holder)
+        if (holder is MessageViewHolder) {
+            val params = holder.messageContainer.layoutParams as ConstraintLayout.LayoutParams
+            params.startToStart = ConstraintLayout.LayoutParams.UNSET
+            params.endToEnd = ConstraintLayout.LayoutParams.UNSET
+            params.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+            holder.messageContainer.layoutParams = params
         }
     }
 
@@ -85,8 +119,8 @@ class MessageAdapter(
         holder.bind(model)
         val currentMessage = getItem(position)
         val prevMessage = if (position > 0) getItem(position - 1) else null
-        val currentMonthAndDay = getMonthAndDay(currentMessage.getMessageTime())
-        val prevMonthAndDay = prevMessage?.let { getMonthAndDay(it.getMessageTime()) }
+        val currentMonthAndDay = currentMessage.getMessageTime().toFormattedDate()
+        val prevMonthAndDay = prevMessage?.let { it.getMessageTime().toFormattedDate() }
 
         if (currentMonthAndDay != prevMonthAndDay) {
             holder.messageTime.visibility = View.VISIBLE
@@ -112,16 +146,4 @@ class MessageAdapter(
     }
 
     override fun getItemCount() = super.getItemCount()
-
-    fun getMonthAndDay(timestamp: Long): String {
-        val formatter = SimpleDateFormat("MMM dd") // specify month and day format
-        val formatedDate = formatter.format(Date(timestamp))
-        return formatedDate
-    }
-
-    fun getTime(timestamp: Long): String {
-        val formatter = SimpleDateFormat("hh:mm:ss a") // specify time format
-        val formatedDate = formatter.format(Date(timestamp))
-        return formatedDate
-    }
 }

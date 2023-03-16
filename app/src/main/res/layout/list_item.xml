@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="March 8"
         android:textStyle="italic|bold|normal"
-        android:textColor="#8B000000"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_5"
         android:text="James Blunt"
-        android:textColor="#8B000000"
+        android:textColor="@color/white"
         android:textStyle="normal|bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageTime"
@@ -40,7 +40,7 @@
         android:background="@drawable/message_item_background"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+
         app:layout_constraintTop_toBottomOf="@+id/messageUser">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -50,6 +50,7 @@
             android:layout_gravity="end"
             android:layout_marginVertical="@dimen/dp_5"
             android:padding="10dp"
+            android:textSelectHandleLeft="@color/teal_700"
             android:selectAllOnFocus="false"
             android:text="Main message text Main message text Main message text Main message text Main message text Main message text Main message text Main message text"
             android:textColor="@color/white"

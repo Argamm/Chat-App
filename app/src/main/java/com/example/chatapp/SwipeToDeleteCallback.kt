@@ -22,7 +22,7 @@ open class SwipeToDeleteCallback(
     messageRecyclerView: RecyclerView
 ) : ItemTouchHelper.SimpleCallback(
     0,
-    ItemTouchHelper.LEFT
+    ItemTouchHelper.RIGHT
 ) {
     private val recyclerView = messageRecyclerView
 
@@ -87,7 +87,7 @@ open class SwipeToDeleteCallback(
                 .setInterpolator(AccelerateInterpolator())
 
             // Change the background color gradually to the original color
-            val originalColor = itemView.resources.getColor(R.color.white)
+            val originalColor = itemView.resources.getColor(com.firebase.ui.auth.R.color.mtrl_btn_transparent_bg_color)
             val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), Color.TRANSPARENT, originalColor)
             colorAnimation.addUpdateListener { animator ->
                 val color = animator.animatedValue as Int
@@ -142,8 +142,8 @@ open class SwipeToDeleteCallback(
         val intrinsicWidth = deleteIcon.intrinsicWidth
         val intrinsicHeight = deleteIcon.intrinsicHeight
 
-        val background = ColorDrawable(Color.RED)
-        val backgroundColor = Color.parseColor("#f44336")
+        val background = ColorDrawable(Color.YELLOW)
+        val backgroundColor = Color.parseColor("#FFFF5722")
         background.color = backgroundColor
         val iconMargin = (itemHeight - intrinsicHeight) / 2
         val iconTop = itemView.top + (itemHeight - intrinsicHeight) / 2

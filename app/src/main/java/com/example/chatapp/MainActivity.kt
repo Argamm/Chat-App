@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -20,6 +21,7 @@ import com.example.chatapp.databinding.ActivityMainBinding
 import com.example.chatapp.notification.NotificationData
 import com.example.chatapp.notification.PushNotification
 import com.example.chatapp.notification.RetrofitInstance
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -113,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                     editMessageText.setText("")
                     displayAllMessages()
                 }
-                it.hideKeyboard()
+//                it.hideKeyboard()
             }
             chooseFile.setOnClickListener {
                 checkReadExternalStoragePermission()
