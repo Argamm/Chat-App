@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val TOPIC = "/topics/my_topic"
-asdfasfdas fsafdas fds
+asdfasfdas fsafdas fds df bgdfgdfg fdgv
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val signInCode: Int = 1
