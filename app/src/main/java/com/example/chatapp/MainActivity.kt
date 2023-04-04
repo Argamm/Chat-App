@@ -48,14 +48,11 @@ class MainActivity : AppCompatActivity() {
     var id = Random().nextInt()
     val senderId = FirebaseAuth.getInstance().currentUser?.uid
 
-    private lateinit var shimmerFrameLayout: ShimmerFrameLayout
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        shimmerFrameLayout = findViewById(R.id.shimmer_view_container)
+
 //for knowing device token
         /* FirebaseMessaging.getInstance().token.addOnCompleteListener {
              if (!it.isSuccessful) {
@@ -65,7 +62,6 @@ class MainActivity : AppCompatActivity() {
              Log.e("TOKEN", it.result)
          }
          */
-        startShimmerAnimation()
 
         activityMainContainer = binding.activityContainer
 
@@ -75,17 +71,6 @@ class MainActivity : AppCompatActivity() {
 
         onViewClick()
     }
-
-    private fun startShimmerAnimation() {
-        shimmerFrameLayout.startShimmer()
-    }
-
-    internal fun stopShimmerAnimation() {
-        shimmerFrameLayout.stopShimmer()
-        shimmerFrameLayout.visibility = View.INVISIBLE
-        binding.messageRecyclerView.visibility = View.VISIBLE
-    }
-
 
     private fun sendNotification(notification: PushNotification) =
         CoroutineScope(Dispatchers.IO).launch {
@@ -217,12 +202,6 @@ class MainActivity : AppCompatActivity() {
         messageList.adapter = firebaseListAdapter
 
         getSwipeToDelete()
-        firebaseListAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                super.onItemRangeInserted(positionStart, itemCount)
-                stopShimmerAnimation()
-            }
-        })
     }
 
     private fun getSwipeToDelete() {
