@@ -38,6 +38,7 @@ import java.util.*
 
 const val TOPIC = "/topics/my_topic"
 
+today is a good day
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val signInCode: Int = 1
